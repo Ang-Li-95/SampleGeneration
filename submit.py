@@ -20,27 +20,18 @@ def read_value_from_file():
 
 ##################################################
 
-########## setup
-
-home = os.getcwd()
-dirtemplates = home + "/templates"
-dirdrivers = home + "/drivers"
-#wdir = home + "/simulations"
-wdir = "/scratch/ang.li/GenProduction_stop_MLtraining_lowdm_2018"
-#wdir = "/scratch/ang.li/GenProduction_lowdM_2"
-#wdir = "/scratch/ang.li/GenProduction_C1N2qcut30"
-
 ########## options
 
-opts, args = getopt.getopt(sys.argv[1:], "rbm:l:c:n:y:", ["reset", "bash", "llpmass=", "lspmass=", "ctau=", "nevents=", "year="])
+opts, args = getopt.getopt(sys.argv[1:], "rbt:m:l:c:n:y:", ["reset", "bash", "model=", "llpmass=", "lspmass=", "ctau=", "nevents=", "year="])
 
 reset = False
 bash = False
+model = ''
 llpmass = 600.
 lspmass = 588.
 ctau = 200.  # in mm!
 nevents = 5000
-year = 2018
+year = 2024
 useCustomPhysics = True
 
 for opt, arg in opts:
@@ -48,6 +39,8 @@ for opt, arg in opts:
         reset = True
     if opt in ("-b", "--bash"):
         bash = True
+    if opt in ("-t", "--model"):
+        model = arg
     if opt in ("-m", "--llpmass"):
         llpmass = float(arg)
     if opt in ("-l", "--lspmass"):
@@ -59,14 +52,22 @@ for opt, arg in opts:
     if opt in ("-y", "--year"):
         year = int(arg)
 
+assert model in ["C1N2","STOP"], "Unknow model {}".format(model)
+
 if reset:
     save_value_to_file(1)
 firstEvent = read_value_from_file()
 save_value_to_file(firstEvent + nevents)
 
-#drivers_t = dirdrivers + "/C1N2_{}_{}_{}_{}_{}".format(llpmass, lspmass, ctau, nevents, year)
-drivers_t = dirdrivers + "/STOP_{}_{}_{}_{}_{}{}".format(llpmass, lspmass, ctau, nevents, year,'_CP' if useCustomPhysics else '')
-#drivers_t = dirdrivers + "/N2N3_{}_{}_{}_{}".format(n2n3mass, lspmass, ctau, nevents)
+drivers_t = dirdrivers + "/{}_{}_{}_{}_{}_{}{}".format(model,llpmass, lspmass, ctau, nevents, year,'_CP' if useCustomPhysics else '')
+
+########## setup
+
+home = os.getcwd()
+dirtemplates = home + "/templates"
+dirdrivers = home + "/drivers"
+wdir = "/scratch/ang.li/GenProduction_stop_MLtraining_lowdm_2018"
+
 
 if not os.path.exists(drivers_t):
     exit("No existing drivers for mass configuration, create drivers first")
@@ -91,13 +92,10 @@ os.chdir(thiswdir)
 os.environ["RUN_NUMBER"] = thiswdir
 os.environ["FIRST_EVENT"] = str(firstEvent)
 
-#jobfile_t = dirtemplates + "/job_template_GEN_{}{}.sh".format('CustomPhysics_' if useCustomPhysics else '',year)
 jobfile_t = dirtemplates + "/job_template_{}{}.sh".format('CustomPhysics_' if useCustomPhysics else '',year)
 jobfile = "job.sh"
 
-#fragmentfile_t = dirtemplates + "/SMS_C1N2-fragment_template.py"
-fragmentfile_t = dirtemplates + "/STOP-fragment_template.py"
-#fragmentfile_t = dirtemplates + "/SMS_N2N3-fragment_template.py"
+fragmentfile_t = dirtemplates + "/{}-fragment_template.py".format(model)
 fragmentfile = "fragment.py"
 
 random_t = dirtemplates + "/random.py"
@@ -116,9 +114,7 @@ lspStr = str(int(lspmass)) if int(lspmass) == lspmass else str(lspmass).replace(
 ctauStr = str(int(ctau)) if int(ctau) == ctau else str(ctau).replace(".","p")
 
 shutil.copyfile(jobfile_t, jobfile)
-#os.system('sed -i "s|PROCESS|' + "C1N2" + '|g" ' + jobfile)
-os.system('sed -i "s|PROCESS|' + "STOP" + '|g" ' + jobfile)
-#os.system('sed -i "s|PROCESS|' + "N2N3" + '|g" ' + jobfile)
+os.system('sed -i "s|PROCESS|' + model + '|g" ' + jobfile)
 os.system('sed -i "s|LLPMASS|' + llpStr + '|g" ' + jobfile)
 os.system('sed -i "s|LSPMASS|' + lspStr + '|g" ' + jobfile)
 os.system('sed -i "s|CTAUVALUE|' + ctauStr + '|g" ' + jobfile)

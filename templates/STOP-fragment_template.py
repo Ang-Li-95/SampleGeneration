@@ -1,9 +1,9 @@
 import FWCore.ParameterSet.Config as cms
 from Configuration.Generator.Pythia8CommonSettings_cfi import *
-from Configuration.Generator.MCTunes2017.PythiaCP5Settings_cfi import *
+from Configuration.Generator.MCTunesRun3ECM13p6TeV.PythiaCP5Settings_cfi import *
 from Configuration.Generator.PSweightsPythia.PythiaPSweightsSettings_cfi import *
 
-mStop = STOPMASS
+mStop = LLPMASS
 mLSP = LSPMASS
 ctau = CTAUVALUE
 ctaustr = "{:.1f}".format(ctau).replace('.','p')
@@ -13,13 +13,13 @@ gevWidth = hBarCinGeVmm / ctau
 
 FLAVOR = 'stop'
 PROCESS_FILE = 'SimG4Core/CustomPhysics/data/stophadronProcessList.txt'
-#PARTICLE_FILE = 'Configuration/Generator/data/particles_%s_%d_GeV.txt'  % (FLAVOR, int(mStop))
+PARTICLE_FILE = 'Configuration/Generator/data/particles_%s_%d_GeV.txt'  % (FLAVOR, int(mStop))
 #SLHA_FILE ='Configuration/Generator/data/SUSY/LLStop/LL_%s_%d_Neutralino_%d_CTau_%s_SLHA.spc' % (FLAVOR, int(mStop), int(mLSP), ctaustr)
-#PDT_FILE = 'Configuration/Generator/data/hscppythiapdt%s%d.tbl'  % (FLAVOR, int(mStop))
+PDT_FILE = 'Configuration/Generator/data/hscppythiapdt%s%d.tbl'  % (FLAVOR, int(mStop))
 #For private generation
-PARTICLE_FILE = 'Configuration/GenProduction/data/particles_%s_%d_GeV.txt'  % (FLAVOR, int(mStop))
+#PARTICLE_FILE = 'Configuration/GenProduction/data/particles_%s_%d_GeV.txt'  % (FLAVOR, int(mStop))
 SLHA_FILE ='Configuration/GenProduction/data/LL_%s_%d_Neutralino_%d_CTau_%s_SLHA.spc' % (FLAVOR, int(mStop), int(mLSP), ctaustr)
-PDT_FILE = 'Configuration/GenProduction/data/hscppythiapdt%s%d.tbl'  % (FLAVOR, int(mStop))
+#PDT_FILE = 'Configuration/GenProduction/data/hscppythiapdt%s%d.tbl'  % (FLAVOR, int(mStop))
 USE_REGGE = False
 
 
@@ -28,6 +28,7 @@ externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
     nEvents = cms.untracked.uint32(EVENTCOUNT),
     numberOfParameters = cms.uint32(1),
     outputFile = cms.string('cmsgrid_final.lhe'),
+    generateConcurrently = cms.untracked.bool(False),
     scriptName = cms.FileInPath('GeneratorInterface/LHEInterface/data/run_generic_tarball_cvmfs.sh')
 )
 #Link to datacards:
@@ -87,7 +88,7 @@ generator = cms.EDFilter("Pythia8ConcurrentHadronizerFilter",
   pythiaPylistVerbosity = cms.untracked.int32(1),
   filterEfficiency = cms.untracked.double(1.0),
   pythiaHepMCVerbosity = cms.untracked.bool(False),
-  comEnergy = cms.double(13000.),
+  comEnergy = cms.double(13600.),
   PythiaParameters = basePythiaParameters,
   SLHAFileForPythia8 = cms.string('%s' % SLHA_FILE), 
   ConfigDescription = cms.string('%s_%i_%i' % (model, mStop, mLSP)),
