@@ -1,13 +1,25 @@
 #!/bin/bash
 
+
+cat > inside_container.sh <<'EOS'
+#!/bin/bash
+
+echo "env setup"
 export SCRAM_ARCH=el8_amd64_gcc12
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 n=EVENTCOUNT
-HOME="$PWD"
-STORE="/scratch/ang.li/GenOutput_mixstop_new"
+SOURCE="$PWD"
+STORE="/scratch/ang.li/GenOutput_2024"
 RUN_NUMBER=$RUN_NUMBER
 FIRST_EVENT=$FIRST_EVENT
+echo "First event $FIRST_EVENT"
+HOME=$RUN_DIR
+echo "Work directory $HOME"
+mkdir -p $HOME
+cd $HOME
 #EVENT_NUMBER=$EVENT_NUMBER
+
+cp -r $SOURCE/* .
 
 if [ ! -d $STORE ]; then
   mkdir $STORE
@@ -58,3 +70,10 @@ done
 cp $HOME/CMSSW_14_0_21/src/AODSIM.root PROCESS_LLPMASS_LSPMASS_CTAUVALUE/AODSIM/$RUN_NUMBER-AODSIM_EVENTCOUNT.root
 
 rm -r $HOME/CMSSW_14_0_21
+
+echo "Container job finished!"
+EOS
+
+chmod +x inside_container.sh
+
+cmssw-el8 --command-to-run bash inside_container.sh

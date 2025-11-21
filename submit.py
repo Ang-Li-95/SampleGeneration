@@ -53,20 +53,24 @@ for opt, arg in opts:
         year = int(arg)
 
 assert model in ["C1N2","STOP"], "Unknow model {}".format(model)
+if model == "C1N2":
+    useCustomPhysics = False
+elif model == "STOP":
+    useCustomPhysics = True
 
 if reset:
     save_value_to_file(1)
 firstEvent = read_value_from_file()
 save_value_to_file(firstEvent + nevents)
 
-drivers_t = dirdrivers + "/{}_{}_{}_{}_{}_{}{}".format(model,llpmass, lspmass, ctau, nevents, year,'_CP' if useCustomPhysics else '')
 
 ########## setup
 
 home = os.getcwd()
 dirtemplates = home + "/templates"
 dirdrivers = home + "/drivers"
-wdir = "/scratch/ang.li/GenProduction_stop_MLtraining_lowdm_2018"
+wdir = "/scratch/ang.li/GenProduction_2024"
+drivers_t = dirdrivers + "/{}_{}_{}_{}_{}_{}{}".format(model,llpmass, lspmass, ctau, nevents, year,'_CP' if useCustomPhysics else '')
 
 
 if not os.path.exists(drivers_t):
@@ -91,6 +95,11 @@ os.mkdir(thiswdir)
 os.chdir(thiswdir)
 os.environ["RUN_NUMBER"] = thiswdir
 os.environ["FIRST_EVENT"] = str(firstEvent)
+
+import uuid
+uuid_ =  str(uuid.uuid4())
+run_dir = '/tmp/%s/'%uuid_
+os.environ["RUN_DIR"] = run_dir
 
 jobfile_t = dirtemplates + "/job_template_{}{}.sh".format('CustomPhysics_' if useCustomPhysics else '',year)
 jobfile = "job.sh"

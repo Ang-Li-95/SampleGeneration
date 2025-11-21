@@ -12,7 +12,7 @@ lspmass = 588.
 ctau = 200.  # in mm!
 nevents = 5000
 year = 2024
-useCustomPhysics = True
+useCustomPhysics = False
 
 for opt, arg in opts:
     if opt in ("-t", "--model"):
@@ -37,8 +37,10 @@ dirtemplates = home + "/templates"
 dirgridpacks = "/groups/hephy/cms/ang.li/gridpacks/"
 if model=="STOP":
   fnamegridpack_t = "SMS_StopStop_mStop_LLPMASS_el8_amd64_gcc12_CMSSW_12_4_8_tarball.tar.xz"
+  useCustomPhysics = True
 elif model=="C1N2":
   fnamegridpack_t = "SMS_C1N2_mC1_LLPMASS_el8_amd64_gcc12_CMSSW_12_4_8_tarball.tar.xz"
+  useCustomPhysics = False
 wdir = home + "/drivers"
 
 

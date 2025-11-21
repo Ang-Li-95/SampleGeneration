@@ -3,7 +3,7 @@ from Configuration.Generator.Pythia8CommonSettings_cfi import *
 from Configuration.Generator.MCTunes2017.PythiaCP5Settings_cfi import *
 from Configuration.Generator.PSweightsPythia.PythiaPSweightsSettings_cfi import *
 
-mStop = STOPMASS
+mStop = LLPMASS
 mLSP = LSPMASS
 ctau = CTAUVALUE
 ctaustr = "{:.1f}".format(ctau).replace('.','p')

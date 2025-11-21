@@ -50,15 +50,29 @@
 #  done
 #done
 
-for m in 400 600 800 1000 1200 1400
+#for m in 400
+#do
+#  for dm in 12 
+#  do
+#    mm=$((m-dm))
+#    #for ct in 0.2 2 20 200 
+#    for ct in 2 200 
+#    do
+#      echo python driver.py -t C1N2 -m ${m} -l ${mm} -c ${ct} -n 5000 -y 2024
+#      python driver.py -t C1N2 -m ${m} -l ${mm} -c ${ct} -n 5000 -y 2024
+#    done
+#  done
+#done
+
+for m in 1000
 do
-  for dm in 5 2
+  for dm in 12
   do
     mm=$((m-dm))
-    for ct in 0.2 2 20 200
+    for ct in 2 200 
     do
-      echo python driver.py -m ${m} -l ${mm} -c ${ct} -n 5000 -y 2018
-      python driver.py -m ${m} -l ${mm} -c ${ct} -n 5000 -y 2018
+      echo python driver.py -t STOP -m ${m} -l ${mm} -c ${ct} -n 5000 -y 2024
+      python driver.py -t STOP -m ${m} -l ${mm} -c ${ct} -n 5000 -y 2024
     done
   done
 done
